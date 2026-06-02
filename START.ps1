@@ -132,11 +132,35 @@ if ($isPlaceholder) {
         }
         Write-OK "firebase_options.dart berhasil di-generate!"
 
+        # f) Daftarkan akun default maskiryz23@gmail.com
+        Write-INFO "Mendaftarkan akun default ke Firebase Auth..."
+        $createResult = firebase auth:create-user `
+            --email "maskiryz23@gmail.com" `
+            --password "opet123" 2>&1
+        if ($createResult -match "Successfully created" -or $createResult -match "already exists") {
+            Write-OK "Akun maskiryz23@gmail.com siap digunakan"
+        } else {
+            Write-INFO "Info akun: $createResult"
+        }
+
     } else {
         Write-INFO "Melewati setup Firebase. App akan jalan tapi fitur login/favorit tidak aktif."
     }
 } else {
     Write-OK "Firebase sudah dikonfigurasi sebelumnya"
+
+    # Coba daftarkan akun jika Firebase sudah terkonfigurasi
+    Write-INFO "Memastikan akun default terdaftar..."
+    $createResult = firebase auth:create-user `
+        --email "maskiryz23@gmail.com" `
+        --password "opet123" 2>&1
+    if ($createResult -match "Successfully created") {
+        Write-OK "Akun maskiryz23@gmail.com berhasil didaftarkan"
+    } elseif ($createResult -match "already exists" -or $createResult -match "EMAIL_EXISTS") {
+        Write-OK "Akun maskiryz23@gmail.com sudah terdaftar sebelumnya"
+    } else {
+        Write-INFO "Jalankan: firebase auth:create-user --email maskiryz23@gmail.com --password opet123"
+    }
 }
 
 # ── 5. Cek device ────────────────────────────────────────────

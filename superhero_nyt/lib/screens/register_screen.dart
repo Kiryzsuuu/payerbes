@@ -4,26 +4,27 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart' as ap;
 import '../theme/nyt_theme.dart';
 import '../widgets/auth_widgets.dart';
-import 'register_screen.dart';
-import 'forgot_password_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _obscure = true;
+  bool _obscurePass = true;
+  bool _obscureConfirm = true;
 
   @override
   void dispose() {
     _emailCtrl.dispose();
     _passCtrl.dispose();
+    _confirmCtrl.dispose();
     super.dispose();
   }
 
@@ -31,6 +32,14 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: NYTColors.white,
+      appBar: AppBar(
+        backgroundColor: NYTColors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: NYTColors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Consumer<ap.AuthProvider>(
         builder: (context, auth, _) {
           return SafeArea(
@@ -41,12 +50,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 16),
                     const AuthMasthead(),
-                    const SizedBox(height: 36),
+                    const SizedBox(height: 32),
 
                     Text(
-                      'SIGN IN',
+                      'CREATE ACCOUNT',
                       style: GoogleFonts.frankRuhlLibre(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -56,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Welcome back, valued reader',
+                      'Join our network of hero enthusiasts',
                       style: GoogleFonts.sourceSerif4(
                         fontSize: 14,
                         color: NYTColors.darkGrey,
@@ -84,21 +93,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Password
                     TextFormField(
                       controller: _passCtrl,
-                      obscureText: _obscure,
+                      obscureText: _obscurePass,
                       decoration: InputDecoration(
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outline,
                             color: NYTColors.darkGrey),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscure
+                            _obscurePass
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
                             color: NYTColors.darkGrey,
                             size: 20,
                           ),
                           onPressed: () =>
-                              setState(() => _obscure = !_obscure),
+                              setState(() => _obscurePass = !_obscurePass),
                         ),
                       ),
                       style: GoogleFonts.sourceSerif4(fontSize: 14),
@@ -106,41 +115,45 @@ class _LoginScreenState extends State<LoginScreen> {
                           ? 'Minimal 6 karakter'
                           : null,
                     ),
+                    const SizedBox(height: 14),
 
-                    // Lupa password link
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const ForgotPasswordScreen()),
-                        ),
-                        style: TextButton.styleFrom(
-                          foregroundColor: NYTColors.darkGrey,
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          'Lupa password?',
-                          style: GoogleFonts.sourceSerif4(
-                            fontSize: 12,
+                    // Konfirmasi password
+                    TextFormField(
+                      controller: _confirmCtrl,
+                      obscureText: _obscureConfirm,
+                      decoration: InputDecoration(
+                        labelText: 'Konfirmasi password',
+                        prefixIcon: const Icon(Icons.lock_outline,
+                            color: NYTColors.darkGrey),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirm
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
                             color: NYTColors.darkGrey,
-                            decoration: TextDecoration.underline,
+                            size: 20,
                           ),
+                          onPressed: () => setState(
+                              () => _obscureConfirm = !_obscureConfirm),
                         ),
                       ),
+                      style: GoogleFonts.sourceSerif4(fontSize: 14),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Wajib diisi';
+                        if (v != _passCtrl.text) return 'Password tidak sama';
+                        return null;
+                      },
                     ),
 
                     if (auth.error != null) ...[
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 14),
                       AuthErrorBanner(message: auth.error!),
                     ],
 
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
 
                     AuthPrimaryButton(
-                      label: 'MASUK',
+                      label: 'BUAT AKUN',
                       loading: auth.loading,
                       onPressed: () => _submit(auth),
                     ),
@@ -155,13 +168,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 32),
 
                     AuthBottomLink(
-                      question: 'Belum punya akun? ',
-                      action: 'Daftar sekarang',
-                      onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterScreen()),
-                      ),
+                      question: 'Sudah punya akun? ',
+                      action: 'Masuk',
+                      onTap: () => Navigator.pop(context),
                     ),
                     const SizedBox(height: 32),
                   ],
@@ -176,6 +185,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> _submit(ap.AuthProvider auth) async {
     if (!_formKey.currentState!.validate()) return;
-    await auth.signInWithEmail(_emailCtrl.text.trim(), _passCtrl.text);
+    final success = await auth.registerWithEmail(
+        _emailCtrl.text.trim(), _passCtrl.text);
+    if (success && mounted) Navigator.pop(context);
   }
 }

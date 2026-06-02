@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/superhero_provider.dart';
@@ -18,30 +18,11 @@ class FavoritesScreen extends StatelessWidget {
         builder: (context, provider, _) {
           return CustomScrollView(
             slivers: [
-              SliverToBoxAdapter(
-                child: SafeArea(
-                  bottom: false,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-                    child: Column(
-                      children: [
-                        Text(
-                          'The Hero Times',
-                          style: GoogleFonts.unna(
-                            fontSize: 28,
-                            fontWeight: FontWeight.bold,
-                            color: NYTColors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        const Divider(thickness: 2, color: NYTColors.black),
-                        const SizedBox(height: 2),
-                        const Divider(thickness: 1, color: NYTColors.black),
-                      ],
-                    ),
-                  ),
-                ),
+              // ── Header konsisten NYT ─────────────────────
+              const SliverToBoxAdapter(
+                child: NYTSubpageHeader(section: 'Reading List'),
               ),
+
               if (provider.loadingFavorites)
                 const SliverFillRemaining(
                   child: Center(
@@ -50,11 +31,11 @@ class FavoritesScreen extends StatelessWidget {
                   ),
                 )
               else if (provider.favoriteHeroes.isEmpty)
-                SliverFillRemaining(child: _EmptyFavorites())
+                const SliverFillRemaining(child: _EmptyFavorites())
               else ...[
                 SliverToBoxAdapter(
                   child: SectionLabel(
-                      'Saved Â· ${provider.favoriteHeroes.length} articles'),
+                      'Saved · ${provider.favoriteHeroes.length} articles'),
                 ),
                 SliverPadding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -74,8 +55,23 @@ class FavoritesScreen extends StatelessWidget {
                                   alignment: Alignment.centerRight,
                                   color: NYTColors.accent,
                                   padding: const EdgeInsets.only(right: 20),
-                                  child: const Icon(Icons.bookmark_remove,
-                                      color: Colors.white),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.bookmark_remove,
+                                          color: Colors.white, size: 22),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'REMOVE',
+                                        style: GoogleFonts.frankRuhlLibre(
+                                          fontSize: 9,
+                                          color: Colors.white,
+                                          letterSpacing: 1,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 onDismissed: (_) =>
                                     provider.toggleFavorite(hero),
@@ -110,6 +106,8 @@ class FavoritesScreen extends StatelessWidget {
 }
 
 class _EmptyFavorites extends StatelessWidget {
+  const _EmptyFavorites();
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -118,7 +116,8 @@ class _EmptyFavorites extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.bookmark_border, size: 64, color: NYTColors.midGrey),
+            const Icon(Icons.bookmark_border,
+                size: 56, color: NYTColors.midGrey),
             const SizedBox(height: 16),
             Text(
               'Your Reading List',
@@ -135,6 +134,8 @@ class _EmptyFavorites extends StatelessWidget {
               style: GoogleFonts.sourceSerif4(
                 fontSize: 14,
                 color: NYTColors.darkGrey,
+                fontStyle: FontStyle.italic,
+                height: 1.5,
               ),
             ),
           ],
@@ -143,4 +144,3 @@ class _EmptyFavorites extends StatelessWidget {
     );
   }
 }
-

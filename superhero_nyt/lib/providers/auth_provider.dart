@@ -80,6 +80,29 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future<bool> sendPasswordReset(String email) async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      _loading = false;
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _error = _friendlyError(e.code);
+      _loading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  // Reload user dari Firebase (dipanggil setelah update display name)
+  Future<void> refreshUser() async {
+    await _auth.currentUser?.reload();
+    notifyListeners();
+  }
+
   Future<void> signOut() async {
     await _googleSignIn.signOut();
     await _auth.signOut();
