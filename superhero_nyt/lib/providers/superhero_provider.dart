@@ -41,14 +41,10 @@ class SuperheroProvider extends ChangeNotifier {
   }
 
   void _listenCustomHeroes() {
-    _db
-        .collection('custom_heroes')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .listen((snap) {
-      _customHeroes = snap.docs
-          .map((doc) => CustomHero.fromDoc(doc).toSuperhero())
-          .toList();
+    _db.collection('custom_heroes').snapshots().listen((snap) {
+      final sorted = snap.docs.map(CustomHero.fromDoc).toList()
+        ..sort((a, b) => a.order.compareTo(b.order));
+      _customHeroes = sorted.map((h) => h.toSuperhero()).toList();
       AppLogger.firestoreRead('custom_heroes (featured)', snap.docs.length);
       notifyListeners();
     });

@@ -80,7 +80,7 @@ class DetailScreen extends StatelessWidget {
                       ],
                       const SizedBox(height: 4),
                       Text(
-                        '${hero.biography.publisher} Â· ${hero.biography.firstAppearance}',
+                        '${hero.biography.publisher} · ${hero.biography.firstAppearance}',
                         style: GoogleFonts.frankRuhlLibre(
                           fontSize: 12,
                           color: NYTColors.darkGrey,

@@ -55,6 +55,7 @@ class CustomHero {
   final int combat;
   final DateTime? createdAt;
   final String createdBy;
+  final int order;
 
   CustomHero({
     this.id,
@@ -75,6 +76,7 @@ class CustomHero {
     required this.combat,
     this.createdAt,
     this.createdBy = '',
+    this.order = 9999,
   });
 
   factory CustomHero.fromDoc(DocumentSnapshot doc) {
@@ -98,6 +100,7 @@ class CustomHero {
       combat: d['combat'] ?? 50,
       createdAt: (d['createdAt'] as Timestamp?)?.toDate(),
       createdBy: d['createdBy'] ?? '',
+      order: d['order'] ?? 9999,
     );
   }
 
@@ -152,6 +155,7 @@ class CustomHero {
         'durability': durability,
         'power': power,
         'combat': combat,
+        'order': order,
         'createdAt': FieldValue.serverTimestamp(),
         'createdBy': createdBy,
       };

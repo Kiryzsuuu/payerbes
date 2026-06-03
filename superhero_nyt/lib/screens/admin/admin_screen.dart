@@ -124,25 +124,46 @@ class AdminScreen extends StatelessWidget {
                 )
               else
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 80),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, i) {
-                        final hero = admin.customHeroes[i];
-                        return _HeroAdminCard(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      'Seret  ≡  untuk mengatur urutan section',
+                      style: GoogleFonts.sourceSerif4(
+                          fontSize: 11,
+                          color: NYTColors.darkGrey,
+                          fontStyle: FontStyle.italic),
+                    ),
+                  ),
+                ),
+              if (admin.customHeroes.isNotEmpty)
+                SliverPadding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+                  sliver: SliverReorderableList(
+                    itemCount: admin.customHeroes.length,
+                    onReorder: admin.reorderHeroes,
+                    itemBuilder: (context, i) {
+                      final hero = admin.customHeroes[i];
+                      final sectionLabel = i == 0
+                          ? 'Today\'s Feature'
+                          : i <= 2
+                              ? 'In The News'
+                              : 'Also Reported';
+                      return ReorderableDragStartListener(
+                        key: ValueKey(hero.id),
+                        index: i,
+                        child: _HeroAdminCard(
                           hero: hero,
+                          sectionLabel: sectionLabel,
                           onEdit: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) =>
-                                    AddEditHeroScreen(hero: hero)),
+                                builder: (_) => AddEditHeroScreen(hero: hero)),
                           ),
                           onDelete: () =>
                               _confirmDelete(context, admin, hero),
-                        );
-                      },
-                      childCount: admin.customHeroes.length,
-                    ),
+                        ),
+                      );
+                    },
                   ),
                 ),
             ],
@@ -190,11 +211,13 @@ class AdminScreen extends StatelessWidget {
 
 class _HeroAdminCard extends StatelessWidget {
   final CustomHero hero;
+  final String sectionLabel;
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
   const _HeroAdminCard({
     required this.hero,
+    required this.sectionLabel,
     required this.onEdit,
     required this.onDelete,
   });
@@ -294,6 +317,22 @@ class _HeroAdminCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+                  const SizedBox(height: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: NYTColors.midGrey),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: Text(
+                      '📌 $sectionLabel',
+                      style: GoogleFonts.frankRuhlLibre(
+                          fontSize: 9,
+                          color: NYTColors.darkGrey,
+                          letterSpacing: 0.5),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -301,6 +340,8 @@ class _HeroAdminCard extends StatelessWidget {
             // Actions
             Column(
               children: [
+                const Icon(Icons.drag_handle,
+                    size: 20, color: NYTColors.midGrey),
                 IconButton(
                   icon: const Icon(Icons.edit_outlined,
                       size: 20, color: NYTColors.sectionBlue),

@@ -56,7 +56,7 @@ class HeroCardLarge extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 6, 16, 16),
               child: Text(
-                '${hero.biography.publisher} Â· ${hero.biography.firstAppearance}',
+                '${hero.biography.publisher} · ${hero.biography.firstAppearance}',
                 style: GoogleFonts.sourceSerif4(
                   fontSize: 13,
                   color: NYTColors.darkGrey,

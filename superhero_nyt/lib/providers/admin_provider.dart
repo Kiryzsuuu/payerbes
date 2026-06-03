@@ -63,15 +63,32 @@ class AdminProvider extends ChangeNotifier {
   }
 
   void _listenHeroes() {
-    _db
-        .collection('custom_heroes')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .listen((snap) {
-      _customHeroes = snap.docs.map(CustomHero.fromDoc).toList();
+    _db.collection('custom_heroes').snapshots().listen((snap) {
+      _customHeroes = snap.docs.map(CustomHero.fromDoc).toList()
+        ..sort((a, b) => a.order.compareTo(b.order));
       AppLogger.firestoreRead('custom_heroes', snap.docs.length);
       notifyListeners();
     });
+  }
+
+  // ── REORDER ──────────────────────────────────────────────
+  Future<void> reorderHeroes(int oldIndex, int newIndex) async {
+    if (!isAdmin) return;
+    final list = List<CustomHero>.from(_customHeroes);
+    final item = list.removeAt(oldIndex);
+    list.insert(newIndex, item);
+    _customHeroes = list;
+    notifyListeners();
+
+    final batch = _db.batch();
+    for (var i = 0; i < list.length; i++) {
+      batch.update(
+        _db.collection('custom_heroes').doc(list[i].id),
+        {'order': i},
+      );
+    }
+    await batch.commit();
+    AppLogger.info('Hero order updated');
   }
 
   // ── CREATE ───────────────────────────────────────────────
@@ -84,6 +101,7 @@ class AdminProvider extends ChangeNotifier {
       final data = hero.toMap();
       final by = _auth.currentUser?.email ?? '';
       data['createdBy'] = by;
+      data['order'] = _customHeroes.length; // append to end
       final docRef = await _db.collection('custom_heroes').add(data);
       AppLogger.heroAdded(hero.name, by);
       AppLogger.firestoreWrite('custom_heroes', docRef.id);
