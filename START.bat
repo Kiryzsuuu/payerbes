@@ -1,3 +1,4 @@
 @echo off
-title The Hero Times - Setup & Run
-powershell.exe -ExecutionPolicy Bypass -File "%~dp0START.ps1"
+title The Hero Times - Setup
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0START.ps1"
+pause
