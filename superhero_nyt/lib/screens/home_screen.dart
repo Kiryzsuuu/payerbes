@@ -93,36 +93,25 @@ class _HeroContent extends StatelessWidget {
           child: Divider(color: NYTColors.midGrey),
         ),
 
-        // Two-column middle row
+        // In The News — full-width small cards
         if (heroes.length > 1) ...[
           SectionLabel(sec2),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: HeroCardLarge(
-                    hero: heroes[1],
-                    onTap: () => _goToDetail(context, heroes[1]),
-                  ),
-                ),
-                if (heroes.length > 2) ...[
-                  const SizedBox(
-                    width: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(color: NYTColors.midGrey),
-                      child: SizedBox(height: double.infinity),
+          ...List.generate(
+            (heroes.length - 1).clamp(0, 2),
+            (i) => Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: HeroCardSmall(
+                      hero: heroes[i + 1],
+                      onTap: () => _goToDetail(context, heroes[i + 1]),
                     ),
                   ),
-                  Expanded(
-                    child: HeroCardLarge(
-                      hero: heroes[2],
-                      onTap: () => _goToDetail(context, heroes[2]),
-                    ),
-                  ),
+                  const Divider(color: NYTColors.midGrey),
                 ],
-              ],
+              ),
             ),
           ),
         ],
@@ -132,7 +121,7 @@ class _HeroContent extends StatelessWidget {
           child: Divider(color: NYTColors.black, thickness: 2),
         ),
 
-        // Briefs list
+        // Also Reported — remaining heroes
         if (heroes.length > 3) ...[
           SectionLabel(sec3),
           ...List.generate(
