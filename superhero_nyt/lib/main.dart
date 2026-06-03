@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
+
 import 'providers/superhero_provider.dart';
 import 'providers/auth_provider.dart' as ap;
 import 'providers/admin_provider.dart';
@@ -17,30 +18,9 @@ import 'screens/admin/admin_screen.dart';
 import 'screens/userdisplayname_screen.dart';
 import 'theme/nyt_theme.dart';
 
-// Daftarkan akun default sekali saja
-Future<void> _seedAccounts() async {
-  final accounts = [
-    {'email': 'maskiryz23@gmail.com', 'password': 'opet123'},
-    {'email': 'kiryzsu@gmail.com', 'password': 'opet123'},
-  ];
-  for (final acc in accounts) {
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: acc['email']!,
-        password: acc['password']!,
-      );
-    } on FirebaseAuthException catch (e) {
-      if (e.code != 'email-already-in-use') {
-        debugPrint('Seed ${acc['email']}: ${e.code}');
-      }
-    }
-  }
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await _seedAccounts();
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
