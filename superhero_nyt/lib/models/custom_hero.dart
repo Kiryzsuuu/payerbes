@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'superhero.dart';
 
 enum UserRole { admin, user }
 
@@ -99,6 +100,41 @@ class CustomHero {
       createdBy: d['createdBy'] ?? '',
     );
   }
+
+  Superhero toSuperhero() => Superhero(
+        id: id ?? name.hashCode.toString(),
+        name: name,
+        imageUrl: imageUrl,
+        biography: Biography(
+          fullName: fullName,
+          alterEgos: '-',
+          placeOfBirth: '-',
+          firstAppearance: firstAppearance,
+          publisher: publisher,
+          alignment: alignment,
+        ),
+        powerstats: Powerstats(
+          intelligence: intelligence.toString(),
+          strength: strength.toString(),
+          speed: speed.toString(),
+          durability: durability.toString(),
+          power: power.toString(),
+          combat: combat.toString(),
+        ),
+        appearance: Appearance(
+          gender: '-',
+          race: '-',
+          height: ['-'],
+          weight: ['-'],
+          eyeColor: '-',
+          hairColor: '-',
+        ),
+        connections: Connections(
+          groupAffiliation: groupAffiliation,
+          relatives: '-',
+        ),
+        work: Work(occupation: occupation, base: '-'),
+      );
 
   Map<String, dynamic> toMap() => {
         'name': name,

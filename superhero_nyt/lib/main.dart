@@ -9,6 +9,7 @@ import 'firebase_options.dart';
 import 'providers/superhero_provider.dart';
 import 'providers/auth_provider.dart' as ap;
 import 'providers/admin_provider.dart';
+import 'providers/site_settings_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/search_screen.dart';
 import 'screens/favorites_screen.dart';
@@ -38,6 +39,7 @@ class HeroTimesApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ap.AuthProvider()),
         ChangeNotifierProvider(create: (_) => SuperheroProvider()),
         ChangeNotifierProvider(create: (_) => AdminProvider()),
+        ChangeNotifierProvider(create: (_) => SiteSettingsProvider()),
       ],
       child: MaterialApp(
         title: 'The Hero Times',

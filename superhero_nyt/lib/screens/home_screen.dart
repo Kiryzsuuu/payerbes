@@ -1,6 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/superhero_provider.dart';
+import '../providers/site_settings_provider.dart';
 import '../widgets/hero_card.dart';
 import '../widgets/nyt_header.dart';
 import '../theme/nyt_theme.dart';
@@ -13,12 +14,19 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: NYTColors.white,
-      body: Consumer<SuperheroProvider>(
-        builder: (context, provider, _) {
+      body: Consumer2<SuperheroProvider, SiteSettingsProvider>(
+        builder: (context, provider, settingsProvider, _) {
+          final settings = settingsProvider.settings;
+          final heroes = settings.showApiHeroes
+              ? provider.featured
+              : provider.featured
+                  .where((h) => provider.customHeroIds.contains(h.id))
+                  .toList();
           return RefreshIndicator(
             color: NYTColors.black,
             onRefresh: provider.loadFeatured,
             child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
                 const SliverToBoxAdapter(child: NYTHeader()),
                 if (provider.loadingFeatured)
@@ -31,7 +39,12 @@ class HomeScreen extends StatelessWidget {
                     ),
                   )
                 else
-                  _HeroContent(heroes: provider.featured),
+                  _HeroContent(
+                    heroes: heroes,
+                    sec1: settings.section1Label,
+                    sec2: settings.section2Label,
+                    sec3: settings.section3Label,
+                  ),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
               ],
             ),
@@ -44,7 +57,15 @@ class HomeScreen extends StatelessWidget {
 
 class _HeroContent extends StatelessWidget {
   final List heroes;
-  const _HeroContent({required this.heroes});
+  final String sec1;
+  final String sec2;
+  final String sec3;
+  const _HeroContent({
+    required this.heroes,
+    this.sec1 = "Today's Feature",
+    this.sec2 = 'In The News',
+    this.sec3 = 'Also Reported',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +80,7 @@ class _HeroContent extends StatelessWidget {
     return SliverList(
       delegate: SliverChildListDelegate([
         // Featured hero (full width)
-        const SectionLabel('Today\'s Feature'),
+        SectionLabel(sec1),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: HeroCardLarge(
@@ -74,7 +95,7 @@ class _HeroContent extends StatelessWidget {
 
         // Two-column middle row
         if (heroes.length > 2) ...[
-          const SectionLabel('In The News'),
+          SectionLabel(sec2),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -111,7 +132,7 @@ class _HeroContent extends StatelessWidget {
 
         // Briefs list
         if (heroes.length > 3) ...[
-          const SectionLabel('Also Reported'),
+          SectionLabel(sec3),
           ...List.generate(
             heroes.length - 3,
             (i) => Padding(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../providers/site_settings_provider.dart';
 import '../theme/nyt_theme.dart';
 
 // ── Header penuh untuk halaman utama (dengan tanggal & tagline) ──────────────
@@ -19,6 +21,7 @@ class NYTHeader extends StatelessWidget {
     ];
     final dateStr =
         '${days[now.weekday - 1]}, ${months[now.month - 1]} ${now.day}, ${now.year}';
+    final s = context.watch<SiteSettingsProvider>().settings;
 
     return SafeArea(
       bottom: false,
@@ -39,7 +42,7 @@ class NYTHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 Text(
-                  'The Hero Times',
+                  s.siteTitle,
                   style: GoogleFonts.unna(
                     fontSize: 42,
                     fontWeight: FontWeight.bold,
@@ -49,7 +52,7 @@ class NYTHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'ALL THE SUPERHERO NEWS THAT\'S FIT TO PRINT',
+                  s.tagline.toUpperCase(),
                   style: GoogleFonts.frankRuhlLibre(
                     fontSize: 10,
                     letterSpacing: 2,

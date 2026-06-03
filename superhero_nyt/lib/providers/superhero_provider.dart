@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/superhero.dart';
+import '../models/custom_hero.dart';
 import '../services/superhero_service.dart';
 import '../services/logger_service.dart';
 
@@ -10,7 +11,8 @@ class SuperheroProvider extends ChangeNotifier {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  List<Superhero> _featured = [];
+  List<Superhero> _apiFeatured = [];
+  List<Superhero> _customHeroes = [];
   List<Superhero> _searchResults = [];
   Set<String> _favoriteIds = {};
   List<Superhero> _favoriteHeroes = [];
@@ -21,7 +23,8 @@ class SuperheroProvider extends ChangeNotifier {
   String _searchQuery = '';
   String? _error;
 
-  List<Superhero> get featured => _featured;
+  List<Superhero> get featured => [..._customHeroes, ..._apiFeatured];
+  Set<String> get customHeroIds => _customHeroes.map((h) => h.id).toSet();
   List<Superhero> get searchResults => _searchResults;
   List<Superhero> get favoriteHeroes => _favoriteHeroes;
   Set<String> get favoriteIds => _favoriteIds;
@@ -33,7 +36,22 @@ class SuperheroProvider extends ChangeNotifier {
 
   SuperheroProvider() {
     loadFeatured();
+    _listenCustomHeroes();
     _auth.authStateChanges().listen((_) => _loadFavorites());
+  }
+
+  void _listenCustomHeroes() {
+    _db
+        .collection('custom_heroes')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .listen((snap) {
+      _customHeroes = snap.docs
+          .map((doc) => CustomHero.fromDoc(doc).toSuperhero())
+          .toList();
+      AppLogger.firestoreRead('custom_heroes (featured)', snap.docs.length);
+      notifyListeners();
+    });
   }
 
   // ── Featured ────────────────────────────────────────────
@@ -43,8 +61,8 @@ class SuperheroProvider extends ChangeNotifier {
     notifyListeners();
     AppLogger.info('Memuat featured heroes dari API...');
     try {
-      _featured = await _service.getFeaturedHeroes();
-      AppLogger.info('Featured heroes berhasil dimuat: ${_featured.length} hero');
+      _apiFeatured = await _service.getFeaturedHeroes();
+      AppLogger.info('Featured heroes berhasil dimuat: ${_apiFeatured.length} hero');
     } catch (e) {
       _error = 'Gagal memuat hero. Periksa koneksi internet.';
       AppLogger.apiError('getFeaturedHeroes', e.toString());
@@ -64,7 +82,15 @@ class SuperheroProvider extends ChangeNotifier {
     _loadingSearch = true;
     notifyListeners();
     try {
-      _searchResults = await _service.searchHeroes(query.trim());
+      final apiResults = await _service.searchHeroes(query.trim());
+      final localMatches = _customHeroes
+          .where((h) => h.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+      // custom heroes di depan supaya selalu muncul
+      final seen = <String>{};
+      _searchResults = [...localMatches, ...apiResults]
+          .where((h) => seen.add(h.id))
+          .toList();
       AppLogger.search(query, _searchResults.length);
     } catch (e) {
       _searchResults = [];

@@ -7,6 +7,7 @@ import '../../providers/admin_provider.dart';
 import '../../theme/nyt_theme.dart';
 import '../../widgets/nyt_header.dart';
 import 'add_edit_hero_screen.dart';
+import 'site_settings_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({super.key});
@@ -37,30 +38,61 @@ class AdminScreen extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: Row(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: NYTColors.sectionBlue,
-                          borderRadius: BorderRadius.circular(2),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: NYTColors.sectionBlue,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                            child: Text(
+                              'ADMIN',
+                              style: GoogleFonts.frankRuhlLibre(
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1.5),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            '${admin.customHeroes.length} hero tersimpan di database',
+                            style: GoogleFonts.sourceSerif4(
+                                fontSize: 12, color: NYTColors.darkGrey),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton.icon(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SiteSettingsScreen()),
                         ),
-                        child: Text(
-                          'ADMIN',
+                        icon: const Icon(Icons.tune_outlined,
+                            size: 16, color: NYTColors.black),
+                        label: Text(
+                          'PENGATURAN SITUS',
                           style: GoogleFonts.frankRuhlLibre(
-                              fontSize: 10,
-                              color: Colors.white,
+                              fontSize: 11,
+                              color: NYTColors.black,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 1.5),
                         ),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: NYTColors.black),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(2)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        '${admin.customHeroes.length} hero tersimpan di database',
-                        style: GoogleFonts.sourceSerif4(
-                            fontSize: 12, color: NYTColors.darkGrey),
-                      ),
+                      const SizedBox(height: 4),
                     ],
                   ),
                 ),

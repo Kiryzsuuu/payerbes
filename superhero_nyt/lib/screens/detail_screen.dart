@@ -39,10 +39,13 @@ class DetailScreen extends StatelessWidget {
                   background: CachedNetworkImage(
                     imageUrl: hero.imageUrl,
                     fit: BoxFit.cover,
-                    errorWidget: (_, __, ___) => Container(
+                    errorWidget: (_, _, _) => Container(
                       color: NYTColors.lightGrey,
-                      child: const Icon(Icons.person,
-                          size: 80, color: NYTColors.midGrey),
+                      child: const Icon(
+                        Icons.person,
+                        size: 80,
+                        color: NYTColors.midGrey,
+                      ),
                     ),
                   ),
                 ),
@@ -105,7 +108,9 @@ class DetailScreen extends StatelessWidget {
                       _InfoRow('Place of Birth', hero.biography.placeOfBirth),
                       _InfoRow('Publisher', hero.biography.publisher),
                       _InfoRow(
-                          'First Appearance', hero.biography.firstAppearance),
+                        'First Appearance',
+                        hero.biography.firstAppearance,
+                      ),
 
                       const SizedBox(height: 20),
                       const Divider(color: NYTColors.midGrey),
@@ -116,10 +121,8 @@ class DetailScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       _InfoRow('Gender', hero.appearance.gender),
                       _InfoRow('Race', hero.appearance.race),
-                      _InfoRow('Height',
-                          hero.appearance.height.join(' / ')),
-                      _InfoRow('Weight',
-                          hero.appearance.weight.join(' / ')),
+                      _InfoRow('Height', hero.appearance.height.join(' / ')),
+                      _InfoRow('Weight', hero.appearance.weight.join(' / ')),
                       _InfoRow('Eye Color', hero.appearance.eyeColor),
                       _InfoRow('Hair Color', hero.appearance.hairColor),
 
@@ -132,8 +135,10 @@ class DetailScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       _InfoRow('Occupation', hero.work.occupation),
                       _InfoRow('Base', hero.work.base),
-                      _InfoRow('Group Affiliation',
-                          hero.connections.groupAffiliation),
+                      _InfoRow(
+                        'Group Affiliation',
+                        hero.connections.groupAffiliation,
+                      ),
                     ],
                   ),
                 ),
@@ -155,13 +160,13 @@ class _AlignmentBadge extends StatelessWidget {
     final color = alignment.toLowerCase() == 'good'
         ? NYTColors.sectionBlue
         : alignment.toLowerCase() == 'bad'
-            ? NYTColors.accent
-            : NYTColors.gold;
+        ? NYTColors.accent
+        : NYTColors.gold;
     final label = alignment.toLowerCase() == 'good'
         ? 'HERO'
         : alignment.toLowerCase() == 'bad'
-            ? 'VILLAIN'
-            : 'NEUTRAL';
+        ? 'VILLAIN'
+        : 'NEUTRAL';
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
@@ -304,4 +309,3 @@ class _PowerStatsGrid extends StatelessWidget {
     return NYTColors.darkGrey;
   }
 }
-

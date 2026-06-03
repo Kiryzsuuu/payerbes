@@ -25,8 +25,8 @@ class HeroCardLarge extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: hero.imageUrl,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => _shimmer(),
-                errorWidget: (_, __, ___) => _placeholder(),
+                placeholder: (_, _) => _shimmer(),
+                errorWidget: (_, _, _) => _placeholder(),
               ),
             ),
             Padding(
@@ -71,15 +71,15 @@ class HeroCardLarge extends StatelessWidget {
   }
 
   Widget _shimmer() => Shimmer.fromColors(
-        baseColor: NYTColors.midGrey,
-        highlightColor: NYTColors.lightGrey,
-        child: Container(color: NYTColors.midGrey),
-      );
+    baseColor: NYTColors.midGrey,
+    highlightColor: NYTColors.lightGrey,
+    child: Container(color: NYTColors.midGrey),
+  );
 
   Widget _placeholder() => Container(
-        color: NYTColors.lightGrey,
-        child: const Icon(Icons.person, size: 60, color: NYTColors.midGrey),
-      );
+    color: NYTColors.lightGrey,
+    child: const Icon(Icons.person, size: 60, color: NYTColors.midGrey),
+  );
 
   String _getAlignmentTag(String alignment) {
     switch (alignment.toLowerCase()) {
@@ -114,15 +114,18 @@ class HeroCardSmall extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: hero.imageUrl,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => Shimmer.fromColors(
+                placeholder: (_, _) => Shimmer.fromColors(
                   baseColor: NYTColors.midGrey,
                   highlightColor: NYTColors.lightGrey,
                   child: Container(color: NYTColors.midGrey),
                 ),
-                errorWidget: (_, __, ___) => Container(
+                errorWidget: (_, _, _) => Container(
                   color: NYTColors.lightGrey,
-                  child: const Icon(Icons.person,
-                      size: 30, color: NYTColors.midGrey),
+                  child: const Icon(
+                    Icons.person,
+                    size: 30,
+                    color: NYTColors.midGrey,
+                  ),
                 ),
               ),
             ),
@@ -174,4 +177,3 @@ class HeroCardSmall extends StatelessWidget {
     );
   }
 }
-
