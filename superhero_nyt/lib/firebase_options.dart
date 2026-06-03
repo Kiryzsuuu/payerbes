@@ -22,7 +22,7 @@ class DefaultFirebaseOptions {
     }
   }
 
-  // ⚠️  Nilai di bawah adalah PLACEHOLDER.
+  // Nilai di bawah adalah PLACEHOLDER.
   // Jalankan START.bat → pilih "Setup Firebase" untuk menggantinya dengan nilai asli.
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -51,5 +51,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'superman-anin-rizky-hawa-adar.firebasestorage.app',
     measurementId: 'G-89CD6SG2JZ',
   );
-
 }
