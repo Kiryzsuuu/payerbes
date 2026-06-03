@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/superhero.dart';
 import '../services/superhero_service.dart';
+import '../services/logger_service.dart';
 
 class SuperheroProvider extends ChangeNotifier {
   final SuperheroService _service = SuperheroService();
@@ -32,7 +33,6 @@ class SuperheroProvider extends ChangeNotifier {
 
   SuperheroProvider() {
     loadFeatured();
-    // Sync favorit tiap kali auth berubah (login/logout)
     _auth.authStateChanges().listen((_) => _loadFavorites());
   }
 
@@ -41,10 +41,13 @@ class SuperheroProvider extends ChangeNotifier {
     _loadingFeatured = true;
     _error = null;
     notifyListeners();
+    AppLogger.info('Memuat featured heroes dari API...');
     try {
       _featured = await _service.getFeaturedHeroes();
-    } catch (_) {
+      AppLogger.info('Featured heroes berhasil dimuat: ${_featured.length} hero');
+    } catch (e) {
       _error = 'Gagal memuat hero. Periksa koneksi internet.';
+      AppLogger.apiError('getFeaturedHeroes', e.toString());
     }
     _loadingFeatured = false;
     notifyListeners();
@@ -62,8 +65,10 @@ class SuperheroProvider extends ChangeNotifier {
     notifyListeners();
     try {
       _searchResults = await _service.searchHeroes(query.trim());
-    } catch (_) {
+      AppLogger.search(query, _searchResults.length);
+    } catch (e) {
       _searchResults = [];
+      AppLogger.apiError('searchHeroes', e.toString());
     }
     _loadingSearch = false;
     notifyListeners();
@@ -76,12 +81,18 @@ class SuperheroProvider extends ChangeNotifier {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
 
-    final ref = _db.collection('users').doc(uid).collection('favorites').doc(hero.id);
+    final ref = _db
+        .collection('users')
+        .doc(uid)
+        .collection('favorites')
+        .doc(hero.id);
 
     if (_favoriteIds.contains(hero.id)) {
       _favoriteIds.remove(hero.id);
       _favoriteHeroes.removeWhere((h) => h.id == hero.id);
       await ref.delete();
+      AppLogger.favoriteRemoved(hero.name, uid);
+      AppLogger.firestoreDelete('users/$uid/favorites', hero.id);
     } else {
       _favoriteIds.add(hero.id);
       _favoriteHeroes.add(hero);
@@ -93,6 +104,8 @@ class SuperheroProvider extends ChangeNotifier {
         'alignment': hero.biography.alignment,
         'addedAt': FieldValue.serverTimestamp(),
       });
+      AppLogger.favoriteAdded(hero.name, uid);
+      AppLogger.firestoreWrite('users/$uid/favorites', hero.id);
     }
     notifyListeners();
   }
@@ -118,15 +131,20 @@ class SuperheroProvider extends ChangeNotifier {
           .get();
 
       _favoriteIds = snap.docs.map((d) => d.id).toSet();
+      AppLogger.firestoreRead('users/$uid/favorites', snap.docs.length);
 
       if (_favoriteIds.isNotEmpty) {
         final futures = _favoriteIds.map((id) => _service.getHeroById(id));
         final results = await Future.wait(futures);
         _favoriteHeroes = results.whereType<Superhero>().toList();
+        AppLogger.info(
+            'Favorit dimuat: ${_favoriteHeroes.length} hero untuk UID $uid');
       } else {
         _favoriteHeroes = [];
       }
-    } catch (_) {}
+    } catch (e) {
+      AppLogger.apiError('loadFavorites', e.toString());
+    }
 
     _loadingFavorites = false;
     notifyListeners();
