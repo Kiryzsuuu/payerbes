@@ -94,7 +94,7 @@ class _HeroContent extends StatelessWidget {
         ),
 
         // Two-column middle row
-        if (heroes.length > 2) ...[
+        if (heroes.length > 1) ...[
           SectionLabel(sec2),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -107,19 +107,21 @@ class _HeroContent extends StatelessWidget {
                     onTap: () => _goToDetail(context, heroes[1]),
                   ),
                 ),
-                const SizedBox(
-                  width: 1,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(color: NYTColors.midGrey),
-                    child: SizedBox(height: double.infinity),
+                if (heroes.length > 2) ...[
+                  const SizedBox(
+                    width: 1,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(color: NYTColors.midGrey),
+                      child: SizedBox(height: double.infinity),
+                    ),
                   ),
-                ),
-                Expanded(
-                  child: HeroCardLarge(
-                    hero: heroes[2],
-                    onTap: () => _goToDetail(context, heroes[2]),
+                  Expanded(
+                    child: HeroCardLarge(
+                      hero: heroes[2],
+                      onTap: () => _goToDetail(context, heroes[2]),
+                    ),
                   ),
-                ),
+                ],
               ],
             ),
           ),
