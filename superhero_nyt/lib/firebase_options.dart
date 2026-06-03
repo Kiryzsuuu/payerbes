@@ -26,11 +26,11 @@ class DefaultFirebaseOptions {
   // Jalankan START.bat → pilih "Setup Firebase" untuk menggantinya dengan nilai asli.
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    appId: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    messagingSenderId: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    projectId: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    storageBucket: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
+    apiKey: 'AIzaSyC1-tLPli3us2jWbPGDLiGjxmedIQdbqug',
+    appId: '1:818865828200:android:08d9b560cc03bed913a6dd',
+    messagingSenderId: '818865828200',
+    projectId: 'superman-anin-rizky-hawa-adar',
+    storageBucket: 'superman-anin-rizky-hawa-adar.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -43,11 +43,13 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    appId: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    messagingSenderId: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    projectId: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    storageBucket: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
-    authDomain: 'REPLACE_WITH_FLUTTERFIRE_CONFIGURE',
+    apiKey: 'AIzaSyAKeFgCc5bafayNj8PuzeHZnqjuvql2ePE',
+    appId: '1:818865828200:web:5339fecc3064dc4513a6dd',
+    messagingSenderId: '818865828200',
+    projectId: 'superman-anin-rizky-hawa-adar',
+    authDomain: 'superman-anin-rizky-hawa-adar.firebaseapp.com',
+    storageBucket: 'superman-anin-rizky-hawa-adar.firebasestorage.app',
+    measurementId: 'G-89CD6SG2JZ',
   );
+
 }

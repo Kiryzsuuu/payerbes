@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "818865828200",
+    "project_id": "superman-anin-rizky-hawa-adar",
+    "storage_bucket": "superman-anin-rizky-hawa-adar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818865828200:android:08d9b560cc03bed913a6dd",
+        "android_client_info": {
+          "package_name": "com.kelompok.superhero_nyt"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1-tLPli3us2jWbPGDLiGjxmedIQdbqug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
